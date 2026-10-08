@@ -176,20 +176,20 @@ Plan type was taken from the enrollment segment covering the index date, and the
 | S10 E-values | RR 1.54 (CI limit 1.38); HR 1.58 (CI limit 1.40) | |
 | S11 Negative control (cancer screening) | -0.4 (-1.9, 1.1) | 0.94 (0.75, 1.17) |
 
-- **Why each:** S1-S3 test the outcome definition (S3 is smaller because many semaglutide patients who "discontinued" had switched to tirzepatide); S4-S6 test the analytic method; S7-S8 test the handling of possible diabetes misclassification and missing BMI; S9 tests cost outliers; S10-S11 probe unmeasured confounding.
+- **Why each:** S1-S3 test the outcome definition (S3 is smaller because many semaglutide patients who "discontinued" had switched to tirzepatide); S4-S6 test the analytic method; S7-S8 test the handling of possible diabetes misclassification and missing BMI; S9 tests cost outliers; S10-S11 probe unmeasured confounding. The E-value (VanderWeele & Ding 2017) is the minimum strength of association, on the risk ratio scale, that an unmeasured confounder would need with both drug choice and persistence to explain away the result.
 - **Matching balance:** after matching, all covariate SMDs were below 0.08 (the larger value printed by cobalt for the propensity score "distance" itself, 0.16, is not a covariate). The script was updated to report covariates only.
 
 ## Step 11. Interpretation
 
 - Tirzepatide initiation was associated with 7 more patients per 100 persisting at 12 months (number needed to treat about 14) and about 16 more days on treatment, with higher adherence and much less switching. H1 and H2 supported.
 - Utilization did not differ meaningfully; medical costs were similar; total cost differences were driven by pharmacy costs. H3 supported, with the direction (lower pharmacy cost for tirzepatide) explained by the lower per-fill allowed amount in these data.
-- The finding was robust to definitions, methods, outliers and missing BMI; the negative control was null; an unmeasured confounder would need RR >= 1.54 with both drug choice and persistence to explain away the point estimate.
+- The finding was robust to definitions, methods, outliers and missing BMI; the negative control was null; an unmeasured confounder would need RR >= 1.54 with both drug choice and persistence to explain away the point estimate (E-value; VanderWeele & Ding 2017).
 - **Comparison with the literature:** the RD (7 points) lies between the unadjusted commercial estimate (about 6 points; Marshall 2026) and the military estimate (11 points; Miller 2026); the HR (0.81) is weaker than Miller's 0.67, plausibly because cost sharing reduces persistence in both groups. Similar hospitalization/ED use agrees with Qadeer 2026.
 - **For payers:** if per-fill prices were as in these data, tirzepatide would deliver more treatment-days at lower total allowed cost (a dominant result over 12 months); in reality the net-price difference after rebates determines this.
 
 ## Step 12. Write-up
 
-- The research paper (`06_Research_Paper.docx`) follows RECORD-PE and the TARGET guideline; the checklist (`07_Reporting_Checklist_RECORD-PE.docx`) maps each item to the paper.
+- The research paper (`06_Research_Paper.docx`) follows RECORD-PE and the TARGET guideline and cites all 18 sources in the literature folder plus the E-value methods paper (19 references); the checklist (`07_Reporting_Checklist_RECORD-PE.docx`) maps each item to the paper.
 - Code and materials: GitHub repository (scripts 00-10, the annotated R Markdown, all tables and figures, Markdown sources of all documents). Derived data and copyrighted literature are not shared.
 
 ## Process notes and deviations from the SAP
@@ -201,6 +201,8 @@ Plan type was taken from the enrollment segment covering the index date, and the
 | Prior anti-obesity medication | Constant (0%) in the cohort | Covariate uninformative |
 | Code corrections during the run | Three bugs found and fixed before results were used: a column-name masking error in the subgroup and cost-table helpers, a vector name carried into the two-part cost ratio, and a missing package dependency (chk) for MatchIt | None on the estimates; fixes are in the committed code |
 | Matching balance message | Reported the PS distance with the covariates; changed to covariates only | None |
+| E-value reference (October 8, 2026) | The E-value method paper (VanderWeele & Ding 2017) had been cited only in the paper's reference list. It was added to the literature review (Table B, synthesis point 6), the SAP (S10; recorded as editorial amendment v1.1), the DAG document, this summary and the R Markdown, and the open-access author manuscript was saved to the literature folder | None |
+| Paper revision (October 8, 2026) | The paper originally cited 11 of the 18 literature-folder sources, and Hoog 2026 appeared only in the reference list. The Introduction, Methods and Discussion were revised so that all 18 sources plus VanderWeele & Ding 2017 are cited in the text (19 references) | None on results |
 | Computing environment | R 4.4.1 on macOS 15.7.9, en_US.UTF-8, America/New_York; packages installed from CRAN | n/a |
 
 ## Deliverables produced

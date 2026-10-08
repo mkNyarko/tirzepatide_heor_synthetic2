@@ -1,6 +1,8 @@
 # Literature folder
 
-The full-text files in this folder are copyrighted and are not pushed to GitHub (see `.gitignore`). Full citations, DOIs and links are in `01_protocol/Research_Question_and_Aims.docx` (Key References, Appendix A) and in the literature review deliverable.
+The full-text files in this folder are copyrighted and are not pushed to GitHub (see `.gitignore`). Full citations, DOIs and links are in `01_protocol/02_Literature_Review_and_Synthesis.docx` and in the reference list of `07_reports/06_Research_Paper.docx`.
+
+VanderWeele_Ding_2017_AnnInternMed_E-value.pdf is the authors' accepted manuscript from Harvard's DASH open-access repository (https://dash.harvard.edu/handle/1/36874927; published version doi:10.7326/M16-2607).
 
 Files kept locally:
 
@@ -23,3 +25,4 @@ Files kept locally:
 - Rodriguez_2024_JAMAInternMed_fulltext.html
 - SURMOUNT-5_NCT05822830_ClinicalTrialsGov_results.html
 - Samuels_2025_DOM_fulltext.html
+- VanderWeele_Ding_2017_AnnInternMed_E-value.pdf

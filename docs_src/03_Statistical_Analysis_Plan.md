@@ -3,7 +3,7 @@
 
 **Real-World Persistence and Healthcare Costs of Tirzepatide versus Semaglutide 2.4 mg in Commercially Insured Adults with Obesity**
 
-Maxwell K. Nyarko | Version 1.0 | October 7, 2026 | Status: final before outcome analysis
+Maxwell K. Nyarko | Version 1.1 (editorial amendment of v1.0, October 8, 2026) | Version 1.0 finalized October 7, 2026, before outcome analysis
 
 This plan was written and committed to the project's version-control repository (GitHub, commit "SAP v1.0") before any follow-up outcome was derived or compared between groups. Only the cohort feasibility count (number of initiators) was examined before this version. Any later change is listed in Section 13 with its reason.
 
@@ -171,7 +171,7 @@ Obesity class (1, 2, 3, Unknown), sex, age group (18-44, 45-64) and plan type (C
 | S7 | Exclude baseline metformin users | Residual diabetes misclassification |
 | S8 | Restrict to patients with a recorded obesity class | Missing BMI |
 | S9 | Costs winsorized at the 99th percentile | Outliers |
-| S10 | E-values for the primary RR and HR | Unmeasured confounding |
+| S10 | E-values for the primary RR and HR, for the point estimate and the confidence limit closest to the null (VanderWeele & Ding 2017) | Unmeasured confounding |
 | S11 | Negative control outcome (cancer screening) | Residual confounding |
 
 ## 9. Sample size and power
@@ -228,4 +228,15 @@ The data are fully synthetic and contain no information about real people, so th
 
 ## 13. Amendments after version 1.0
 
-None at the time of writing. Any deviation found during analysis is recorded here and in the summary document, with the reason.
+| Version | Date | Change | Effect on methods |
+|---|---|---|---|
+| 1.1 | October 8, 2026 | Editorial: added the methods reference for E-values (VanderWeele TJ, Ding P. Sensitivity analysis in observational research: introducing the E-value. Ann Intern Med. 2017;167(4):268-274) to S10 and Section 14 | None |
+
+Analytic deviations found during the analysis (none changed a pre-specified method) are recorded in the research step summary.
+
+## 14. Methods references
+
+1. Hernán MA, Robins JM. Using big data to emulate a target trial when a randomized trial is not available. Am J Epidemiol. 2016;183(8):758-764.
+2. Langan SM, et al. The RECORD-PE statement. BMJ. 2018;363:k3532.
+3. Marshall LZ, et al. Trends in 1-year persistence and adherence among initiators of high-potency, weight loss-indicated GLP-1 RAs. J Manag Care Spec Pharm. 2026;32(3):281-291.
+4. VanderWeele TJ, Ding P. Sensitivity analysis in observational research: introducing the E-value. Ann Intern Med. 2017;167(4):268-274.

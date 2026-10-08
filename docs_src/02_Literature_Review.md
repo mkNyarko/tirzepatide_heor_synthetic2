@@ -7,7 +7,7 @@ Maxwell K. Nyarko | October 7, 2026
 
 ## 1. Search methods
 
-The structured PubMed (MEDLINE) search of October 7, 2026 is documented in the protocol (`Research_Question_and_Aims.docx`, Appendix A). Two searches (109 and 46 records; 146 unique) were screened by title and abstract; 10 real-world head-to-head studies were retained. Eight further sources were added by hand because they define the clinical context, the economic context or the methods: two randomized trials (SURMOUNT-5, SURMOUNT-4), a discontinuation cohort (Gasoyan 2025), a payer research report (Prime Therapeutics 2025), two economic evaluations (ICER 2025, Hwang 2025) and two methods papers (Hernán & Robins 2016; RECORD-PE). Full texts are stored in `01_protocol/literature/` (not shared on GitHub because of copyright). Only MEDLINE was searched; Embase, conference abstracts and grey literature were not, so recent work may be missing.
+The structured PubMed (MEDLINE) search of October 7, 2026 is documented in the protocol (`Research_Question_and_Aims.docx`, Appendix A). Two searches (109 and 46 records; 146 unique) were screened by title and abstract; 10 real-world head-to-head studies were retained. Nine further sources were added by hand because they define the clinical context, the economic context or the methods: two randomized trials (SURMOUNT-5, SURMOUNT-4), a discontinuation cohort (Gasoyan 2025), a payer research report (Prime Therapeutics 2025), two economic evaluations (ICER 2025, Hwang 2025) and three methods papers (Hernán & Robins 2016; RECORD-PE; VanderWeele & Ding 2017). VanderWeele & Ding was added when the SAP's bias analysis (E-values) was specified. Full texts are stored in `01_protocol/literature/` (not shared on GitHub because of copyright). Only MEDLINE was searched; Embase, conference abstracts and grey literature were not, so recent work may be missing.
 
 <!-- landscape -->
 
@@ -40,6 +40,7 @@ The structured PubMed (MEDLINE) search of October 7, 2026 is documented in the p
 | Hwang 2025, JAMA Health Forum | Lifetime microsimulation CEA | Both drugs gain QALYs but are not cost-effective at current net prices; results sensitive to discontinuation assumptions | Real-world persistence and cost inputs are needed by economic models |
 | Hernán & Robins 2016, AJE | Methods | Target trial emulation framework | Study design (eligibility, time zero, ITT analogue) |
 | Langan 2018, BMJ (RECORD-PE) | Reporting guideline | Items for pharmacoepidemiology studies using routinely collected data | Reporting checklist |
+| VanderWeele & Ding 2017, Ann Intern Med | Methods | Introduces the E-value: the minimum strength of association, on the risk ratio scale, that an unmeasured confounder would need with both treatment and outcome to explain away an observed association; recommends reporting it for the estimate and the confidence limit closest to the null | Quantitative bias analysis for unmeasured confounding (SAP sensitivity analysis S10) |
 
 ## 4. Synthesis: what the literature says and how it shaped the design
 
@@ -53,9 +54,11 @@ The structured PubMed (MEDLINE) search of October 7, 2026 is documented in the p
 
 **5. Confounders and effect modifiers named in the literature:** age, sex (men discontinue more; Miller 2026), obesity severity, cardiometabolic comorbidities (which affect indications: cardiovascular for Wegovy, sleep apnea for Zepbound), prior GLP-1 use (naive vs non-naive differ; Hoog 2026, so a 365-day new-user washout is used), benefit design and cost sharing (persistence much higher when drugs are free; Miller, Samuels), and calendar time. These became the DAG nodes and prespecified subgroups (obesity class, sex, age group, CDHP plan type).
 
-**6. Common limitations to avoid:** restriction to persistent patients or completers (Ng, Cetiner, Richards) builds selection bias into the comparison, so this study follows all initiators from the first fill (intention-to-treat analogue). Single-centre and non-U.S. studies have limited generalizability to U.S. payers. Diabetes-labeled products (Mounjaro, Ozempic) were used in several studies; this study compares the obesity-labeled products.
+**6. Unmeasured confounding is the main threat in all prior observational comparisons.** None of the retained studies quantified how strong an unmeasured confounder (for example, patient preference or socioeconomic status) would need to be to change its conclusions. This study therefore pre-specifies E-values (VanderWeele & Ding 2017) and a negative control outcome as bias analyses.
 
-**7. Value context.** Economic models disagree widely (from cost-saving to about $197,000 per QALY) mainly because of assumptions about treatment duration and price (ICER 2025; Hwang 2025). Real-world persistence and 12-month cost estimates from a confounding-adjusted comparison can inform these inputs, with the caveat that claims costs exclude rebates.
+**7. Common limitations to avoid:** restriction to persistent patients or completers (Ng, Cetiner, Richards) builds selection bias into the comparison, so this study follows all initiators from the first fill (intention-to-treat analogue). Single-centre and non-U.S. studies have limited generalizability to U.S. payers. Diabetes-labeled products (Mounjaro, Ozempic) were used in several studies; this study compares the obesity-labeled products.
+
+**8. Value context.** Economic models disagree widely (from cost-saving to about $197,000 per QALY) mainly because of assumptions about treatment duration and price (ICER 2025; Hwang 2025). Real-world persistence and 12-month cost estimates from a confounding-adjusted comparison can inform these inputs, with the caveat that claims costs exclude rebates.
 
 ## 5. Key references
 
@@ -77,3 +80,4 @@ The structured PubMed (MEDLINE) search of October 7, 2026 is documented in the p
 16. Hwang et al. Lifetime health effects and cost-effectiveness of tirzepatide and semaglutide in US adults. JAMA Health Forum. 2025.
 17. Hernán MA, Robins JM. Using big data to emulate a target trial when a randomized trial is not available. Am J Epidemiol. 2016;183(8):758-764.
 18. Langan SM, et al. The RECORD-PE statement. BMJ. 2018;363:k3532.
+19. VanderWeele TJ, Ding P. Sensitivity analysis in observational research: introducing the E-value. Ann Intern Med. 2017;167(4):268-274. doi:10.7326/M16-2607

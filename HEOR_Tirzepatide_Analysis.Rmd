@@ -1579,11 +1579,12 @@ print(cost_sens)
 
 **What.** S10: E-values for the primary risk ratio (`EValue::evalues.RR()`) and hazard ratio (`evalues.HR(rare = FALSE)`).
 
-**Why.** The E-value is the minimum strength of association an unmeasured confounder would need with both drug choice and persistence to explain away the result.
+**Why.** The E-value (VanderWeele & Ding 2017) is the minimum strength of association, on the risk ratio scale, that an unmeasured confounder would need with both drug choice and persistence to explain away the result. It is reported for the point estimate and for the confidence limit closest to 1.
 
 ```{r evalues}
-# S10: E-values (minimum strength of unmeasured confounding, on the RR scale, needed to explain away
-# the estimate and its confidence limit). Persistence is common (>15%), so the HR is converted.
+# S10: E-values (VanderWeele & Ding, Ann Intern Med 2017): the minimum strength of unmeasured
+# confounding, on the RR scale, needed to explain away the estimate and its confidence limit.
+# Persistence is common (>15%), so the HR is converted (rare = FALSE).
 cox <- coxph(Surv(time_to_disc, discontinued) ~ treat, data = analytic, weights = w, robust = TRUE)
 hr  <- summary(cox)$conf.int
 ev_rr <- EValue::evalues.RR(primary$rr, primary$rr_lo, primary$rr_hi)

@@ -50,7 +50,13 @@ Each domain is put into practice through the covariates listed in SAP Section 7 
 
 ## 6. Assumptions and threats shown by the DAGs
 
-- **Unmeasured confounding:** if patient or prescriber preference also affects persistence (for example, a patient who asks for "the newer drug" may be more motivated), the estimates are biased. This is checked with E-values (how strong such a confounder would need to be) and a negative control outcome (cancer screening), which shares healthcare-seeking confounders but should not be affected by the drug.
+- **Unmeasured confounding:** if patient or prescriber preference also affects persistence (for example, a patient who asks for "the newer drug" may be more motivated), the estimates are biased. This is checked with E-values (how strong such a confounder would need to be; VanderWeele & Ding 2017) and a negative control outcome (cancer screening), which shares healthcare-seeking confounders but should not be affected by the drug.
 - **Selection (collider) bias from the enrollment requirement:** requiring 12 months of enrollment after index conditions on a post-index event. If leaving the plan is affected by both the drug (unlikely) and outcomes, this could bias results. It is a standard requirement for cost outcomes in claims and is noted as a limitation.
 - **Measurement error in confounders:** BMI and comorbidities are recorded only when coded on claims, so obesity severity is partly unknown ("Unknown" category plus a sensitivity analysis restricted to patients with a recorded class).
 - **Outcome misclassification:** cash-pay purchases (e.g., manufacturer self-pay vials) and copay-card use outside the plan do not appear in claims. A patient who moves to cash pay looks like a discontinuer. If this happens more with one drug (for example, Zepbound single-dose vials sold directly by the manufacturer), persistence would be underestimated for that drug.
+
+## 7. References
+
+1. Marshall LZ, et al. Trends in 1-year persistence and adherence among initiators of high-potency, weight loss-indicated GLP-1 RAs. J Manag Care Spec Pharm. 2026;32(3):281-291.
+2. Miller LB, et al. Patterns of use for GLP-1 receptor agonists in a weight management cohort: a Military Health System database analysis. Mil Med. 2026. doi:10.1093/milmed/usag316
+3. VanderWeele TJ, Ding P. Sensitivity analysis in observational research: introducing the E-value. Ann Intern Med. 2017;167(4):268-274.

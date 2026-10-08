@@ -102,8 +102,9 @@ readr::write_csv(cost_sens, file.path(dir_tables, "table5b_cost_sensitivity.csv"
 print(cost_sens)
 
 ## ---- evalues ----
-# S10: E-values (minimum strength of unmeasured confounding, on the RR scale, needed to explain away
-# the estimate and its confidence limit). Persistence is common (>15%), so the HR is converted.
+# S10: E-values (VanderWeele & Ding, Ann Intern Med 2017): the minimum strength of unmeasured
+# confounding, on the RR scale, needed to explain away the estimate and its confidence limit.
+# Persistence is common (>15%), so the HR is converted (rare = FALSE).
 cox <- coxph(Surv(time_to_disc, discontinued) ~ treat, data = analytic, weights = w, robust = TRUE)
 hr  <- summary(cox)$conf.int
 ev_rr <- EValue::evalues.RR(primary$rr, primary$rr_lo, primary$rr_hi)
