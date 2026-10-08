@@ -1,0 +1,7 @@
+Persistence DAG - minimal adjustment set(s):
+{ Age, BaselineUse, CalendarTime, Comorbidity, Endocrinologist,
+  ObesitySeverity, PlanType, PriorAOM, Region, Sex }
+
+Cost DAG - minimal adjustment set(s):
+{ Age, BaselineUse, CalendarTime, Comorbidity, Endocrinologist,
+  ObesitySeverity, PlanType, PriorAOM, Region, Sex }

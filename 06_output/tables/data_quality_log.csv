@@ -1,0 +1,29 @@
+table,check,n_affected,decision
+members,Exact duplicate rows,44,Drop exact duplicates
+members,"Member IDs with conflicting demographics (e.g., different sex)",22,Cannot tell which record is right: exclude these members from the cohort
+members,Missing birth year,23,Age cannot be computed: excluded at the age criterion
+members,Sex unknown (U),62,Excluded (complete-case on sex; < 1% of members)
+members,Missing state,49,Region set to 'Unknown' category
+members,Birth year implies age < 18 in 2024,177,Removed by the age 18-64 criterion
+enrollment,Exact duplicate segments,470,Drop exact duplicates
+enrollment,Overlapping segments for the same member,1986,Collapse overlapping segments into one continuous span
+enrollment,Gaps between segments (> 1 day),1114,Gaps <= 30 days bridged; longer gaps break continuous enrollment
+enrollment,Segments without pharmacy coverage (rx_coverage = N),252,Not counted as covered time (pharmacy claims not captured)
+enrollment,Segments without medical coverage,0,Not counted as covered time
+pharmacy,NDC hyphenated 5-4-2 format (13 characters),127841,Remove hyphens
+pharmacy,"NDC hyphenated 4-4-2 format (12 characters, labeler lost a leading zero)",21683,Remove hyphens and pad labeler to 5 digits
+pharmacy,NDC stored as number (leading zeros lost; < 11 digits),9379,Left-pad with zeros to 11 digits
+pharmacy,Exact duplicate rows,2964,Drop exact duplicates
+pharmacy,Reversed claims (claim_status = R),10535,Drop the reversal and the paid claim it reverses (same rx_claim_id)
+pharmacy,Same paid rx_claim_id appearing more than once (format-only differences),2310,Keep one row per rx_claim_id
+pharmacy,Missing allowed amount,1582,Impute as paid_amt + member_oop (identity holds in all complete rows)
+pharmacy,Implausible days supply on paid claims (< 3 or > 90 days),961,Replace with the most common days supply for the same product and quantity
+medical,Exact duplicate lines,2706,Drop exact duplicates
+medical,ICD-10-CM codes in lower case,49863,Convert to upper case
+medical,ICD-10-CM codes with a decimal point (mixed formats),216122,Remove the decimal point (match on undotted codes)
+medical,Place of service with leading zero lost ('2' instead of '02'),649,Left-pad to 2 characters
+medical,Duplicate claim_id + line_num after code normalization,2402,Keep one row per claim line
+medical,Missing allowed amount,1916,Impute as paid_amt / median(paid/allowed ratio) for the same claim type
+medical,"Negative allowed amounts (adjustment lines, line_num >= 51)",3193,Keep: adjustments net against the claim; claim totals floored at $0
+medical,"Very large line amounts (> $100,000; inpatient stays)",147,Keep (plausible); costs winsorized at the 99th percentile in a sensitivity analysis
+medical,Obesity class codes E66.811-E66.813 used before their 2024-10-01 effective date,0,None found; codes accepted from 2024-10-01

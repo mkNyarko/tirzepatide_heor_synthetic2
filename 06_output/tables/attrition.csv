@@ -1,0 +1,10 @@
+step,n,n_tirzepatide,n_semaglutide,excluded
+"1. First Zepbound or Wegovy fill, Jan 2024 - Jun 2025 (index date)",10540,4902,5638,NA
+2. Only one study drug filled on the index date,10512,4889,5623,28
+3. Aged 18-64 at index (birth year recorded),9970,4658,5312,542
+4. Known sex and no conflicting member records,9911,4631,5280,59
+5. Continuous medical + pharmacy enrollment 365 days before and after index,7469,3504,3965,2442
+6. New user: no GLP-1 RA fill (any product) in the 365-day baseline,6637,3242,3395,832
+"7. Obesity diagnosis (E66 excl. E66.3, or BMI Z68.30-Z68.45) in baseline or on index",5660,2763,2897,977
+"8. No diabetes (no E10/E11 diagnosis, no non-metformin antidiabetic drug) in baseline",5251,2561,2690,409
+"9. No medullary thyroid cancer / MEN 2 risk code (C73, E31.22) in baseline",5240,2558,2682,11

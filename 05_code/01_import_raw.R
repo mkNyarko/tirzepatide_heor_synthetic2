@@ -6,6 +6,8 @@
 # =============================================================================
 source(here::here("05_code", "00_setup.R"))
 
+## ---- import-raw ----
+
 # Codes must be read as character so leading zeros are not lost on import.
 rx_types <- cols(
   rx_claim_id = col_character(), member_id = col_character(), fill_date = col_date(),
@@ -42,6 +44,7 @@ medical    <- read_stack("^medical_claims_\\d{4}\\.csv\\.gz$", med_types)
 ndc_lookup <- readr::read_csv(file.path(dir_ref, "ndc_product_lookup.csv"), col_types = cols(.default = col_character()))
 icd_lookup <- readr::read_csv(file.path(dir_ref, "icd10cm_codes.csv"), col_types = cols(.default = col_character()))
 
+## ---- import-check ----
 # quick structural check (row counts, parsing problems)
 for (nm in c("members", "enrollment", "pharmacy", "medical")) {
   x <- get(nm)
