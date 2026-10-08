@@ -1,0 +1,19 @@
+# OS / RStudio
+.DS_Store
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+~$*
+
+# Derived data: rebuilt by the code (05_code / the R Markdown)
+04_data_derived/*
+!04_data_derived/.gitkeep
+
+# Full-text literature is copyrighted; citations and links are in the protocol and literature review
+01_protocol/literature/*
+!01_protocol/literature/README.md
+
+# knitr intermediates
+*_cache/
+*.knit.md

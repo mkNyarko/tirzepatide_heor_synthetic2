@@ -1,0 +1,39 @@
+table,field,type,description
+members,member_id,character,De-identified member identifier; links all tables
+members,birth_year,integer,Year of birth (exact birth date withheld for de-identification)
+members,sex,character,"Member sex as reported by the plan: M, F, U (unknown)"
+members,state,character,Two-letter state of residence
+enrollment,member_id,character,Member identifier
+enrollment,eligibility_start,date (YYYY-MM-DD),First day of the eligibility segment
+enrollment,eligibility_end,date (YYYY-MM-DD),Last day of the eligibility segment (data are censored at 2026-06-30)
+enrollment,plan_type,character,"Benefit design: PPO, HMO, POS, EPO, CDHP (consumer-directed / high-deductible)"
+enrollment,group_id,character,Employer group identifier
+enrollment,medical_coverage,character,Y = medical benefit active during segment
+enrollment,rx_coverage,character,Y = pharmacy benefit active during segment; pharmacy claims are only captured when Y
+pharmacy_claims_YYYY,rx_claim_id,character,Pharmacy claim identifier. A reversal carries the same identifier as the claim it reverses
+pharmacy_claims_YYYY,member_id,character,Member identifier
+pharmacy_claims_YYYY,fill_date,date (YYYY-MM-DD),Date dispensed
+pharmacy_claims_YYYY,ndc,character,National Drug Code as submitted by the pharmacy. Read as character
+pharmacy_claims_YYYY,days_supply,integer,Days supply as submitted
+pharmacy_claims_YYYY,quantity,numeric,"Metric quantity dispensed (mL for injectables, units for tablets)"
+pharmacy_claims_YYYY,refill_number,integer,Refill sequence on the prescription as submitted (capped at 11)
+pharmacy_claims_YYYY,claim_status,character,"P = paid, R = reversed"
+pharmacy_claims_YYYY,pharmacy_channel,character,"RETAIL, MAIL, SPECIALTY"
+pharmacy_claims_YYYY,allowed_amt,numeric (USD),Allowed amount (plan paid + member out-of-pocket); excludes manufacturer rebates
+pharmacy_claims_YYYY,paid_amt,numeric (USD),Amount paid by the plan
+pharmacy_claims_YYYY,member_oop,numeric (USD),"Member out-of-pocket (copay, coinsurance, deductible)"
+medical_claims_YYYY,claim_id,character,Claim identifier (header level)
+medical_claims_YYYY,line_num,integer,Claim line number
+medical_claims_YYYY,member_id,character,Member identifier
+medical_claims_YYYY,claim_type,character,PROF = professional (CMS-1500); INST = institutional/facility (UB-04)
+medical_claims_YYYY,service_from_date,date (YYYY-MM-DD),First date of service
+medical_claims_YYYY,service_to_date,date (YYYY-MM-DD),Last date of service
+medical_claims_YYYY,admit_date,date (YYYY-MM-DD),Admission date (inpatient facility claims only)
+medical_claims_YYYY,discharge_date,date (YYYY-MM-DD),Discharge date (inpatient facility claims only)
+medical_claims_YYYY,place_of_service,character,CMS place-of-service code (see reference/place_of_service_codes.csv). Read as character
+medical_claims_YYYY,revenue_code,character,UB-04 revenue code (institutional claims). Read as character
+medical_claims_YYYY,proc_code,character,CPT/HCPCS procedure code
+medical_claims_YYYY,dx1-dx5,character,ICD-10-CM diagnosis codes (dx1 = principal/first-listed); repeated on every line of a claim
+medical_claims_YYYY,prov_specialty,character,Rendering provider specialty (see reference/provider_specialty_codes.csv)
+medical_claims_YYYY,allowed_amt,numeric (USD),Allowed amount for the line
+medical_claims_YYYY,paid_amt,numeric (USD),Amount paid by the plan for the line

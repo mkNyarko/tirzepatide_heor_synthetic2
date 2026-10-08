@@ -1,0 +1,19 @@
+prov_specialty,description
+BAR,Bariatric surgery
+CAR,Cardiology
+EM,Emergency medicine
+END,Endocrinology
+FAC,Facility (hospital)
+FM,Family medicine
+GI,Gastroenterology
+GS,General surgery
+HOS,Hospitalist
+IM,Internal medicine
+LAB,Clinical laboratory
+NP,Nurse practitioner
+OBG,Obstetrics & gynecology
+ORT,Orthopedics
+PSY,Psychiatry
+PT,Physical therapy
+RAD,Radiology
+SLP,Sleep medicine

@@ -1,0 +1,109 @@
+icd10cm_code,icd10cm_code_nodot,description,effective_date
+A41.9,A419,"Sepsis, unspecified organism",before 2023-01-01
+C50.9,C509,Malignant neoplasm of breast of unspecified site,before 2023-01-01
+C73,C73,Malignant neoplasm of thyroid gland,before 2023-01-01
+E03.9,E039,"Hypothyroidism, unspecified",before 2023-01-01
+E10.9,E109,Type 1 diabetes mellitus without complications,before 2023-01-01
+E11.22,E1122,Type 2 diabetes mellitus with diabetic chronic kidney disease,before 2023-01-01
+E11.40,E1140,"Type 2 diabetes mellitus with diabetic neuropathy, unspecified",before 2023-01-01
+E11.65,E1165,Type 2 diabetes mellitus with hyperglycemia,before 2023-01-01
+E11.9,E119,Type 2 diabetes mellitus without complications,before 2023-01-01
+E28.2,E282,Polycystic ovarian syndrome,before 2023-01-01
+E31.22,E3122,Multiple endocrine neoplasia [MEN] type IIA,before 2023-01-01
+E66.01,E6601,Morbid (severe) obesity due to excess calories,before 2023-01-01
+E66.09,E6609,Other obesity due to excess calories,before 2023-01-01
+E66.1,E661,Drug-induced obesity,before 2023-01-01
+E66.2,E662,Morbid (severe) obesity with alveolar hypoventilation,before 2023-01-01
+E66.3,E663,Overweight,before 2023-01-01
+E66.811,E66811,"Obesity, class 1",2024-10-01
+E66.812,E66812,"Obesity, class 2",2024-10-01
+E66.813,E66813,"Obesity, class 3",2024-10-01
+E66.89,E6689,Other obesity not elsewhere classified,before 2023-01-01
+E66.9,E669,"Obesity, unspecified",before 2023-01-01
+E78.00,E7800,"Pure hypercholesterolemia, unspecified",before 2023-01-01
+E78.2,E782,Mixed hyperlipidemia,before 2023-01-01
+E78.5,E785,"Hyperlipidemia, unspecified",before 2023-01-01
+E86.0,E860,Dehydration,before 2023-01-01
+F32.9,F329,"Major depressive disorder, single episode, unspecified",before 2023-01-01
+F32.A,F32A,"Depression, unspecified",2021-10-01
+F33.1,F331,"Major depressive disorder, recurrent, moderate",before 2023-01-01
+F41.1,F411,Generalized anxiety disorder,before 2023-01-01
+F41.9,F419,"Anxiety disorder, unspecified",before 2023-01-01
+G47.33,G4733,Obstructive sleep apnea (adult) (pediatric),before 2023-01-01
+I10,I10,Essential (primary) hypertension,before 2023-01-01
+I21.4,I214,Non-ST elevation (NSTEMI) myocardial infarction,before 2023-01-01
+I25.10,I2510,Atherosclerotic heart disease of native coronary artery without angina pectoris,before 2023-01-01
+I25.2,I252,Old myocardial infarction,before 2023-01-01
+I50.30,I5030,Unspecified diastolic (congestive) heart failure,before 2023-01-01
+I50.32,I5032,Chronic diastolic (congestive) heart failure,before 2023-01-01
+I50.33,I5033,Acute on chronic diastolic (congestive) heart failure,before 2023-01-01
+I63.9,I639,"Cerebral infarction, unspecified",before 2023-01-01
+I73.9,I739,"Peripheral vascular disease, unspecified",before 2023-01-01
+J01.90,J0190,"Acute sinusitis, unspecified",before 2023-01-01
+J06.9,J069,"Acute upper respiratory infection, unspecified",before 2023-01-01
+J18.9,J189,"Pneumonia, unspecified organism",before 2023-01-01
+K21.9,K219,Gastro-esophageal reflux disease without esophagitis,before 2023-01-01
+K59.00,K5900,"Constipation, unspecified",before 2023-01-01
+K75.81,K7581,Nonalcoholic steatohepatitis (NASH),before 2023-01-01
+K76.0,K760,"Fatty (change of) liver, not elsewhere classified",before 2023-01-01
+K80.10,K8010,Calculus of gallbladder with chronic cholecystitis without obstruction,before 2023-01-01
+K80.20,K8020,Calculus of gallbladder without cholecystitis without obstruction,before 2023-01-01
+K85.90,K8590,"Acute pancreatitis without necrosis or infection, unspecified",before 2023-01-01
+K86.1,K861,Other chronic pancreatitis,before 2023-01-01
+L03.116,L03116,Cellulitis of left lower limb,before 2023-01-01
+M17.0,M170,Bilateral primary osteoarthritis of knee,before 2023-01-01
+M17.11,M1711,"Unilateral primary osteoarthritis, right knee",before 2023-01-01
+M17.12,M1712,"Unilateral primary osteoarthritis, left knee",before 2023-01-01
+M25.561,M25561,Pain in right knee,before 2023-01-01
+M54.50,M5450,"Low back pain, unspecified",before 2023-01-01
+N17.9,N179,"Acute kidney failure, unspecified",before 2023-01-01
+N18.31,N1831,"Chronic kidney disease, stage 3a",before 2023-01-01
+N18.32,N1832,"Chronic kidney disease, stage 3b",before 2023-01-01
+N39.0,N390,"Urinary tract infection, site not specified",before 2023-01-01
+O99.212,O99212,"Obesity complicating pregnancy, second trimester",before 2023-01-01
+R07.89,R0789,Other chest pain,before 2023-01-01
+R07.9,R079,"Chest pain, unspecified",before 2023-01-01
+R10.13,R1013,Epigastric pain,before 2023-01-01
+R10.9,R109,Unspecified abdominal pain,before 2023-01-01
+R11.0,R110,Nausea,before 2023-01-01
+R11.2,R112,"Nausea with vomiting, unspecified",before 2023-01-01
+R19.7,R197,"Diarrhea, unspecified",before 2023-01-01
+R42,R42,Dizziness and giddiness,before 2023-01-01
+R51,R51,Headache,before 2023-01-01
+R55,R55,Syncope and collapse,before 2023-01-01
+R73.03,R7303,Prediabetes,before 2023-01-01
+R73.09,R7309,Other abnormal glucose,before 2023-01-01
+S62.90XA,S6290XA,"Unspecified fracture of unspecified wrist and hand, initial encounter",before 2023-01-01
+S72.00XA,S7200XA,"Fracture of unspecified part of neck of femur, initial encounter",before 2023-01-01
+S93.401A,S93401A,"Sprain of unspecified ligament of right ankle, initial encounter",before 2023-01-01
+T07.XXXA,T07XXXA,"Unspecified multiple injuries, initial encounter",before 2023-01-01
+U07.1,U071,COVID-19,2020-04-01
+Z00.00,Z0000,Encounter for general adult medical examination without abnormal findings,before 2023-01-01
+Z00.01,Z0001,Encounter for general adult medical examination with abnormal findings,before 2023-01-01
+Z12.11,Z1211,Encounter for screening for malignant neoplasm of colon,before 2023-01-01
+Z33.01,Z3301,"Pregnant state, incidental",before 2023-01-01
+Z33.1,Z331,"Pregnant state, incidental",before 2023-01-01
+Z34.00,Z3400,"Encounter for supervision of normal first pregnancy, unspecified trimester",before 2023-01-01
+Z34.80,Z3480,"Encounter for supervision of other normal pregnancy, unspecified trimester",before 2023-01-01
+Z68.25,Z6825,"Body mass index [BMI] 25.0-25.9, adult",before 2023-01-01
+Z68.26,Z6826,"Body mass index [BMI] 26.0-26.9, adult",before 2023-01-01
+Z68.27,Z6827,"Body mass index [BMI] 27.0-27.9, adult",before 2023-01-01
+Z68.28,Z6828,"Body mass index [BMI] 28.0-28.9, adult",before 2023-01-01
+Z68.29,Z6829,"Body mass index [BMI] 29.0-29.9, adult",before 2023-01-01
+Z68.30,Z6830,"Body mass index [BMI] 30.0-30.9, adult",before 2023-01-01
+Z68.31,Z6831,"Body mass index [BMI] 31.0-31.9, adult",before 2023-01-01
+Z68.32,Z6832,"Body mass index [BMI] 32.0-32.9, adult",before 2023-01-01
+Z68.33,Z6833,"Body mass index [BMI] 33.0-33.9, adult",before 2023-01-01
+Z68.34,Z6834,"Body mass index [BMI] 34.0-34.9, adult",before 2023-01-01
+Z68.35,Z6835,"Body mass index [BMI] 35.0-35.9, adult",before 2023-01-01
+Z68.36,Z6836,"Body mass index [BMI] 36.0-36.9, adult",before 2023-01-01
+Z68.37,Z6837,"Body mass index [BMI] 37.0-37.9, adult",before 2023-01-01
+Z68.38,Z6838,"Body mass index [BMI] 38.0-38.9, adult",before 2023-01-01
+Z68.39,Z6839,"Body mass index [BMI] 39.0-39.9, adult",before 2023-01-01
+Z68.41,Z6841,"Body mass index [BMI] 40.0-44.9, adult",before 2023-01-01
+Z68.42,Z6842,"Body mass index [BMI] 45.0-49.9, adult",before 2023-01-01
+Z68.43,Z6843,"Body mass index [BMI] 50.0-59.9, adult",before 2023-01-01
+Z68.44,Z6844,"Body mass index [BMI] 60.0-69.9, adult",before 2023-01-01
+Z68.45,Z6845,"Body mass index [BMI] 70 or greater, adult",before 2023-01-01
+Z86.73,Z8673,Personal history of TIA and cerebral infarction without residual deficits,before 2023-01-01
+Z98.84,Z9884,Bariatric surgery status,before 2023-01-01
