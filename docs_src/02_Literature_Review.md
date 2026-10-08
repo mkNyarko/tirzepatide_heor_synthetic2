@@ -9,6 +9,8 @@ Maxwell K. Nyarko | October 7, 2026
 
 The structured PubMed (MEDLINE) search of October 7, 2026 is documented in the protocol (`Research_Question_and_Aims.docx`, Appendix A). Two searches (109 and 46 records; 146 unique) were screened by title and abstract; 10 real-world head-to-head studies were retained. Eight further sources were added by hand because they define the clinical context, the economic context or the methods: two randomized trials (SURMOUNT-5, SURMOUNT-4), a discontinuation cohort (Gasoyan 2025), a payer research report (Prime Therapeutics 2025), two economic evaluations (ICER 2025, Hwang 2025) and two methods papers (Hernán & Robins 2016; RECORD-PE). Full texts are stored in `01_protocol/literature/` (not shared on GitHub because of copyright). Only MEDLINE was searched; Embase, conference abstracts and grey literature were not, so recent work may be missing.
 
+<!-- landscape -->
+
 ## 2. Synthesis table A: real-world comparisons of tirzepatide and semaglutide
 
 | Study | Data and setting | Population and N | Exposure | Outcome definitions | Main findings | Confounding control | Gap relative to this study |
@@ -24,6 +26,8 @@ The structured PubMed (MEDLINE) search of October 7, 2026 is documented in the p
 | Richards 2025, JMIR Form Res | Remote weight management program, UK | 339 completers (209 tirzepatide, 130 semaglutide) | Program prescription | Weight at 12 months; program cost-effectiveness | Weight change -22.1% vs -17.1%; >= 15% loss 83.7% vs 56.2% | None (completers) | Completers only; program costs, not healthcare costs |
 | Hoog 2026, JMCP | Healthcare Integrated Research Database (Carelon) claims and labs, U.S. | Adults with T2D starting Mounjaro or Ozempic, 2022-2023; 10,702 naive matched pairs | New use (naive and non-naive) | Persistence (no gap >= 45 days); PDC >= 80%; T2D pharmacy cost per responder | Naive: persistence 62% vs 47%, adherence 60% vs 45% (tirzepatide vs semaglutide); lower cost per responder for strict targets | PS matching | T2D population; pharmacy costs only |
 | Qadeer 2026, Diab Vasc Dis Res | TriNetX EHR network | 47,804 matched pairs, mean age 75, obesity with T2D | Prescriptions (>= 3) | Mortality, MACE, hospitalization/ED use, GI events at 1 year | Lower MACE (RR 0.92) and mortality; hospitalization/ED use similar | 1:1 PS matching | T2D, older adults; no costs or persistence |
+
+<!-- /landscape -->
 
 ## 3. Synthesis table B: context and methods sources
 

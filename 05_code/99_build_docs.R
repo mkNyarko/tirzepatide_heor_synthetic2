@@ -7,7 +7,7 @@
 # Markdown supported: # / ## / ### headings, paragraphs, "- " bullets, "1. " numbered items,
 #   pipe tables, ![caption](path/to/image.png), **bold**, *italic*, `code`, and a line
 #   containing only \newpage. A first-line HTML comment <!-- out: folder/file.docx --> sets
-#   the output path (relative to the project root).
+#   the output path (relative to the project root). <!-- landscape --> ... <!-- /landscape --> puts the enclosed content on landscape pages.
 # =============================================================================
 suppressPackageStartupMessages({library(officer); library(flextable)})
 root <- here::here()
@@ -67,6 +67,8 @@ md_to_docx <- function(md_file) {
     l <- lines[i]
     if (grepl("^\\s*$", l)) { flush(); i <- i + 1; next }
     if (grepl("^\\\\newpage", l)) { flush(); doc <- body_add_break(doc); i <- i + 1; next }
+    if (grepl("^<!-- landscape -->", l))  { flush(); doc <- body_end_section_portrait(doc);  i <- i + 1; next }
+    if (grepl("^<!-- /landscape -->", l)) { flush(); doc <- body_end_section_landscape(doc); i <- i + 1; next }
     if (grepl("^#{1,3} ", l)) {
       flush(); lvl <- nchar(sub(" .*", "", l)); txt <- sub("^#+ ", "", l)
       if (lvl == 1 && i <= 3) {
