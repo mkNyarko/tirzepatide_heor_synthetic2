@@ -203,6 +203,7 @@ Plan type was taken from the enrollment segment covering the index date, and the
 | Matching balance message | Reported the PS distance with the covariates; changed to covariates only | None |
 | E-value reference (October 8, 2026) | The E-value method paper (VanderWeele & Ding 2017) had been cited only in the paper's reference list. It was added to the literature review (Table B, synthesis point 6), the SAP (S10; recorded as editorial amendment v1.1), the DAG document, this summary and the R Markdown, and the open-access author manuscript was saved to the literature folder | None |
 | Paper revision (October 8, 2026) | The paper originally cited 11 of the 18 literature-folder sources, and Hoog 2026 appeared only in the reference list. The Introduction, Methods and Discussion were revised so that all 18 sources plus VanderWeele & Ding 2017 are cited in the text (19 references) | None on results |
+| Author revision of the paper (October 8, 2026) | The author revised the paper's wording into formal academic voice and added Figures 2, 3 and 5 and Supplementary Figures S1-S3 (Schoenfeld residuals, both DAGs). The Markdown source (`docs_src/06_Research_Paper.md`) was updated to match, and a round-trip rebuild was checked to give identical text, images and formatting | None on results |
 | Computing environment | R 4.4.1 on macOS 15.7.9, en_US.UTF-8, America/New_York; packages installed from CRAN | n/a |
 
 ## Deliverables produced
