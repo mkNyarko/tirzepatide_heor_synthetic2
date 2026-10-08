@@ -115,7 +115,7 @@ twopart_mean <- function(t) {
   nd <- data.frame(treat = t)
   predict(part1, nd, type = "response") * predict(part2, nd, type = "response")
 }
-cr_med <- c(est = twopart_mean(1) / twopart_mean(0))
+cr_med <- c(est = unname(twopart_mean(1) / twopart_mean(0)))
 cost_means <- sapply(c("cost_medical", "cost_pharmacy", "cost_total", "cost_study_drug"), function(v) wmean_by(analytic[[v]]))
 print(round(cost_means))
 
@@ -141,12 +141,13 @@ saveRDS(boot, file.path(dir_derived, "bootstrap_replicates.rds"))
 table2$diff_lo[table2$outcome == "Restricted mean days on treatment (0-365)"] <- boot_ci[1, "rmst"]
 table2$diff_hi[table2$outcome == "Restricted mean days on treatment (0-365)"] <- boot_ci[2, "rmst"]
 
-cost_row <- function(v, label, ratio) {
+cost_row <- function(v, label, ratio_ci) {
+  has_ci <- length(ratio_ci) > 1
   tibble(outcome = label, tirz = cost_means["tirz", v], sema = cost_means["sema", v],
          diff = cost_means["tirz", v] - cost_means["sema", v],
          diff_lo = boot_ci[1, v], diff_hi = boot_ci[2, v],
-         ratio = ratio[["est"]], ratio_lo = if (length(ratio) > 1) ratio[["lo"]] else NA,
-         ratio_hi = if (length(ratio) > 1) ratio[["hi"]] else NA, p = if (length(ratio) > 1) ratio[["p"]] else NA,
+         ratio = ratio_ci[["est"]], ratio_lo = if (has_ci) ratio_ci[["lo"]] else NA,
+         ratio_hi = if (has_ci) ratio_ci[["hi"]] else NA, p = if (has_ci) ratio_ci[["p"]] else NA,
          measure = "Mean difference $ (bootstrap CI) / cost ratio")
 }
 table3 <- bind_rows(
@@ -170,9 +171,23 @@ adj_cost <- glm(update(ps_spec$ps_formula, cost_total ~ treat + .), data = analy
 mu <- fitted(adj_cost)
 park <- glm(I((analytic$cost_total - mu)^2) ~ log(mu), family = quasipoisson(link = "log"), weights = analytic$w)
 park_slope <- coef(park)[2]
+
+# SAP contingency if the Park slope is far from 2: re-estimate the total-cost ratio under an
+# inverse Gaussian variance (slope ~ 3) and a log-normal model with Duan smearing by group
+gamma_total <- glm(cost_total ~ treat, data = analytic, weights = w, family = Gamma(link = "log"))
+ig_ratio <- robust_ci(glm(cost_total ~ treat, data = analytic, weights = w,
+                          family = inverse.gaussian(link = "log"), start = coef(gamma_total)), exp = TRUE)
+ln_fit   <- lm(log(cost_total) ~ treat, data = analytic, weights = w)
+smear    <- sapply(0:1, function(t) {
+  i <- analytic$treat == t; weighted.mean(exp(residuals(ln_fit)[i]), analytic$w[i]) })
+ln_ratio <- exp(coef(ln_fit)[["treat"]]) * smear[2] / smear[1]
+
 checks <- c(
   sprintf("Proportional hazards (cox.zph) global p = %.3f", ph_test$table["GLOBAL", "p"]),
   sprintf("Modified Park test slope (total cost) = %.2f (gamma ~ 2)", park_slope),
+  sprintf("Total cost ratio: gamma %.3f (%.3f-%.3f); inverse Gaussian %.3f (%.3f-%.3f); log-normal with smearing %.3f",
+          cr_total[["est"]], cr_total[["lo"]], cr_total[["hi"]],
+          ig_ratio[["est"]], ig_ratio[["lo"]], ig_ratio[["hi"]], ln_ratio),
   sprintf("Poisson dispersion, outpatient visits = %.2f (>1 = overdispersion; negative binomial theta = %.2f)",
           op$dispersion, op$theta),
   sprintf("Poisson dispersion, obesity-related visits = %.2f", opo$dispersion),

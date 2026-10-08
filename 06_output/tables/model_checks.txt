@@ -1,0 +1,6 @@
+Proportional hazards (cox.zph) global p = 0.412
+Modified Park test slope (total cost) = 3.58 (gamma ~ 2)
+Total cost ratio: gamma 0.890 (0.813-0.975); inverse Gaussian 0.890 (0.813-0.975); log-normal with smearing 0.890
+Poisson dispersion, outpatient visits = 3.02 (>1 = overdispersion; negative binomial theta = 3.06)
+Poisson dispersion, obesity-related visits = 2.54
+Share of patients with $0 medical cost = 2.3%

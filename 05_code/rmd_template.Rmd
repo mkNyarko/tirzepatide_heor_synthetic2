@@ -1,0 +1,463 @@
+---
+title: "Tirzepatide vs Semaglutide 2.4 mg: Persistence, Utilization and Costs"
+subtitle: "Annotated analysis of a synthetic commercial claims extract (target trial emulation)"
+author: "Maxwell K. Nyarko"
+date: "October 2026"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: false
+    df_print: paged
+---
+
+```{r knitr-options, include = FALSE}
+# Run every chunk from the project folder; show code and results; do not stop on warnings
+knitr::opts_knit$set(root.dir = here::here())
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.width = 8, fig.height = 5)
+```
+
+# How to use this file
+
+1. Open `HEOR_Tirzepatide_Project.Rproj` in RStudio (this sets the working folder).
+2. Open this file and either click **Knit** (runs everything and makes an HTML report) or run the chunks one at a time from top to bottom with the green arrow on each chunk (Ctrl/Cmd + Shift + Enter).
+3. The first chunk installs any missing packages, which can take a few minutes the first time. A full run takes about 5-10 minutes; the bootstrap in Step 9.6 is the slowest part.
+
+Every step below has the same layout: **Step**, **What** (each key action and the code line that does it), **Why**, then the R code. Each step saves its results to `04_data_derived/` or `06_output/`, so you can stop and restart at any step after the setup chunk.
+
+**The data are fully synthetic.** Results show how the methods work and are not evidence about either drug.
+
+The same code is also saved as numbered scripts in `05_code/` (00 to 10); this file is assembled from those scripts by `05_code/98_build_rmd.R`.
+
+# Step 0. Set up R
+
+**What**
+
+- Install and load the packages for data handling, weighting, models and figures: `install.packages(to_install)` and `lapply(pkgs, library, ...)`.
+- Make `select()` refer to dplyr (MASS also has a `select()`): `select <- dplyr::select`.
+
+**Why.** Every later step uses these packages. Loading them once at the start makes the run reproducible and avoids errors halfway through.
+
+{{chunk:setup-packages}}
+
+**What**
+
+- Define folder paths with `here::here()` so the code works on any computer.
+- Store the study calendar from the protocol: identification window (`index_start`, `index_end`), 365-day baseline and follow-up, the 60-day persistence gap (`gap_days`), and the 30-day allowed enrollment gap.
+- Fix the random seed with `set.seed(20261007)` so the bootstrap gives the same answer each time.
+
+**Why.** Keeping all design constants in one place means a design change is made once, and readers can check the code against the SAP.
+
+{{chunk:setup-paths}}
+
+# Step 1. Study design: the DAG (workflow step 3)
+
+**What**
+
+- Write the assumed causal structure as a DAG with `dagitty::dagitty()`: one for persistence (`dag_persist`) and one for costs (`dag_cost`).
+- Mark the exposure (`Drug`) and outcome, and list unmeasured nodes (`SES_U`, `Preference_U`).
+
+**Why.** The DAG makes our assumptions explicit and tells us which variables to adjust for (confounders) and which to leave alone (mediators such as GI side effects or the drug's copay).
+
+{{chunk:dag-define}}
+
+**What**
+
+- Ask dagitty for the minimal sufficient adjustment set: `adjustmentSets(dag_persist, type = "minimal")`.
+- List the descendants of `Drug`, which must not be adjusted for: `descendants(dag_persist, "Drug")`.
+
+**Why.** This turns the DAG into a concrete covariate list for the propensity score model (Step 8).
+
+{{chunk:dag-adjust}}
+
+**What.** Plot both DAGs with nodes coloured by role (`plot_dag()`) and save them to `06_output/figures/`.
+
+**Why.** A picture of the assumptions goes into the DAG document and the paper.
+
+{{chunk:dag-plot, fig.height = 7}}
+
+# Step 2. Import the raw extract (workflow step 7 begins)
+
+**What**
+
+- Declare column types so all codes are read as text (`rx_types`, `med_types`; e.g. `ndc = col_character()`).
+- Read and stack the yearly gzip files with `read_stack()`.
+- Read the members, enrollment and reference tables with `readr::read_csv()`.
+
+**Why.** Reading NDC, ICD-10, CPT and place-of-service codes as numbers would drop leading zeros and silently break code matching. Nothing is cleaned here, so the raw data stay exactly as delivered.
+
+{{chunk:import-raw}}
+
+**What.** Print row and column counts and parsing problems for each table, then save R copies with `saveRDS()`.
+
+**Why.** A structural check right after import catches truncated files or type problems before they cause trouble later.
+
+{{chunk:import-check}}
+
+# Step 3. Data quality review
+
+**What**
+
+- Reload the raw tables (`readRDS()`).
+- Create a log with one row per check, using `log_check(table, check, n_affected, decision)`.
+
+**Why.** Vendor claims always contain errors. Finding them before cleaning, and writing down a decision for each, makes the cleaning transparent and reproducible (workflow step 7: "log every data-cleaning decision").
+
+{{chunk:dq-load}}
+
+**What.** Members: count exact duplicates (`duplicated()`), IDs with conflicting demographics (`count(member_id) |> filter(n > 1)`), missing birth year or state, and unknown sex.
+
+**Why.** A member ID should identify one person. Conflicting records mean we cannot know the person's sex or age.
+
+{{chunk:dq-members}}
+
+**What.** Enrollment: count duplicate segments, overlapping segments (`eligibility_start <= prev_end`), gaps (`eligibility_start > prev_end + 1`), and segments without drug or medical coverage.
+
+**Why.** Continuous enrollment is an eligibility criterion, and pharmacy claims exist only while drug coverage is active.
+
+{{chunk:dq-enrollment}}
+
+**What.** Pharmacy: count the three NDC formats (`nchar(pharmacy$ndc)`), duplicates, reversals (`claim_status == "R"`), missing allowed amounts, and implausible days supply (< 3 or > 90).
+
+**Why.** NDCs must match the lookup to identify the study drugs; reversals are claims that were never dispensed; days supply drives persistence and PDC.
+
+{{chunk:dq-pharmacy}}
+
+**What.** Medical: count duplicates, lower-case and dotted ICD-10 codes, place of service with a lost zero, missing or negative allowed amounts, very large amounts, and obesity-class codes used before their effective date.
+
+**Why.** Diagnosis codes define obesity, diabetes and comorbidities; cost fields define the economic outcomes.
+
+{{chunk:dq-medical}}
+
+**What.** Combine the checks with `bind_rows(dq)` and save `06_output/tables/data_quality_log.csv`.
+
+**Why.** The log is a deliverable and is summarized in the data description document.
+
+{{chunk:dq-save}}
+
+# Step 4. Clean members and enrollment
+
+**What**
+
+- Drop exact duplicate member rows (`distinct()`) and flag IDs that still have more than one row (`demo_conflict = n() > 1`).
+- Add census region from the state lookup (`left_join(... state_census_region.csv)`), with "Unknown" when state is missing.
+
+**Why.** One clean row per member is needed before joining; flagged members are excluded at cohort step 4.
+
+{{chunk:clean-members}}
+
+**What**
+
+- Keep segments with both medical and pharmacy coverage (`filter(medical_coverage == "Y", rx_coverage == "Y")`).
+- Merge overlapping or nearly adjacent segments into continuous spans: `cummax()` tracks the latest end date, and a new span starts only when the next segment begins more than 30 days later (`new_span`).
+
+**Why.** Continuous enrollment (365 days before and after index) guarantees we see all claims in the baseline and follow-up windows, so a missing claim means no care, not missing data.
+
+{{chunk:clean-enrollment}}
+
+# Step 5. Clean pharmacy and medical claims
+
+**What**
+
+- Convert every NDC to 11 digits with `normalize_ndc()` (remove hyphens, pad the labeler, restore lost leading zeros).
+- Remove reversed claims and the paid claims they reverse (`!rx_claim_id %in% reversed_ids`), and keep one row per claim (`distinct(rx_claim_id, ...)`).
+- Fill missing allowed amounts as paid + out-of-pocket (`coalesce()`), and add drug names from the lookup (`left_join(ndc_lookup ...)`).
+- Replace implausible days supply with the most common value for the same NDC and quantity (`ds_mode`, `days_supply_fixed`).
+- Check that every NDC matched (`stopifnot()`).
+
+**Why.** Without these fixes some Zepbound and Wegovy fills would be missed, reversed fills would count as treatment, and a "999-day" supply would make a patient look persistent for years.
+
+{{chunk:clean-pharmacy}}
+
+**What**
+
+- Standardize diagnosis codes (`clean_dx()`: upper case, no dot) and pad place of service to two characters (`str_pad()`).
+- Remove duplicate lines (`distinct()`, then one row per `claim_id` + `line_num`).
+- Back-calculate missing allowed amounts from paid amounts using the median paid/allowed ratio by claim type (`paid_ratio`).
+
+**Why.** Consistent codes make the code lists work, and duplicate lines would double-count utilization and costs.
+
+{{chunk:clean-medical}}
+
+# Step 6. Build the cohort (with a flow diagram)
+
+**What**
+
+- Load the clean tables and build a long diagnosis table, one row per member, date and code (`pivot_longer(dx1:dx5)`).
+
+**Why.** Searching one column is simpler and faster than searching five.
+
+{{chunk:cohort-load}}
+
+**What**
+
+- Define the code lists: study products, all GLP-1 RA products, obesity (`dx_obesity`), diabetes (`dx_diabetes`), contraindications (`dx_contraind`) and non-metformin antidiabetic drug classes.
+- Write a helper, `has_dx()`, that returns TRUE if a member has a matching code between two dates.
+
+**Why.** Code lists written in one place are easy to review against the SAP and reuse.
+
+{{chunk:cohort-codes}}
+
+**What**
+
+- Find each member's first Zepbound or Wegovy fill in January 2024 to June 2025: this is the index date and sets the treatment group (`summarise(index_date = first(fill_date))`).
+- Record the counts at each step with `add_step()`.
+
+**Why.** In the target trial emulation, the first fill is "time zero": eligibility, treatment assignment and the start of follow-up all happen on the same day, which avoids immortal time bias.
+
+{{chunk:cohort-index}}
+
+**What.** Apply the criteria in SAP order, recording counts after each `filter()` / `semi_join()` / `anti_join()`:
+
+1. one study drug on the index date;
+2. age 18-64;
+3. known sex and no conflicting records;
+4. continuous enrollment (`span_start <= index_date - 365`, `span_end >= index_date + 364`);
+5. no GLP-1 RA fill in the 365-day baseline (new user);
+6. obesity diagnosis;
+7. no diabetes (no E10/E11 code and no non-metformin antidiabetic fill);
+8. no thyroid cancer / MEN 2 code.
+
+**Why.** Each criterion puts into practice an element of the PECO question and the target trial. The new-user washout makes the two groups comparable at the start of treatment.
+
+{{chunk:cohort-criteria}}
+
+**What.** Add plan type and employer group from the enrollment segment covering the index date (`eligibility_start <= index_date`, `eligibility_end >= index_date`), add the index quarter, and save `cohort.rds`.
+
+**Why.** Plan type is a confounder (benefit design and cost sharing). Index quarter captures calendar-time changes in supply and coverage.
+
+{{chunk:cohort-plan}}
+
+**What.** Save the attrition table and draw the flow diagram (Figure 1) with ggplot2.
+
+**Why.** The flow diagram is required by RECORD-PE and shows readers how the study population was reached.
+
+{{chunk:cohort-attrition, fig.height = 8}}
+
+# Step 7. Baseline covariates
+
+**What.** Load the cohort and claims, and compute each claim's day relative to the index date (`day = fill_date - index_date`).
+
+**Why.** Working in "days since index" makes every time window a simple filter (e.g., baseline = `day >= -365 & day <= -1`).
+
+{{chunk:cov-load}}
+
+**What**
+
+- Define encounters once, one per member per day: inpatient admissions (`claim_type == "INST"` with an admission date), ED visits (place of service 23, revenue code 0450 or CPT 99281-99285), outpatient E/M visits, and obesity-related outpatient visits (E66/Z68 on the claim).
+- Sum medical costs by claim and floor each claim at $0 (`max(0, sum(allowed_amt))`).
+
+**Why.** The same definitions are used for baseline covariates (here) and follow-up outcomes (Step 8), so the two are measured consistently.
+
+{{chunk:cov-encounters}}
+
+**What**
+
+- Flag comorbidities from codes in [index - 365, index] with `dx_flag()` (e.g., hypertension `^I1[0-6]`, sleep apnea `^G4733`).
+- Assign obesity class from the most recent BMI or class code (`case_when()`; Class 3 = BMI >= 40, E66.01, E66.2 or E66.813).
+
+**Why.** These are the confounders in the DAG: they influence which drug is prescribed and the outcomes.
+
+{{chunk:cov-diagnoses}}
+
+**What.** Baseline utilization and costs: counts of each encounter type (`count(member_id, type)`), baseline medical and pharmacy costs, number of distinct generic drugs, endocrinologist visit, and prior bariatric surgery.
+
+**Why.** Prior healthcare use is the best available proxy for overall health and care-seeking, which affect both drug choice and future costs.
+
+{{chunk:cov-utilization}}
+
+**What.** Baseline medication flags by therapeutic class with `rx_flag()` (other anti-obesity drugs, metformin, antihypertensives, statins, antidepressants).
+
+**Why.** Medication use marks comorbidity severity and treatment history.
+
+{{chunk:cov-medications}}
+
+**What.** Join everything into one row per patient; create factors (obesity class, age group, CDHP vs non-CDHP), any baseline inpatient/ED use, and `log_base_cost = log1p(base_total_cost)`; save `covariates.rds`.
+
+**Why.** The log of baseline cost reduces the influence of a few very expensive patients in the propensity score model.
+
+{{chunk:cov-assemble}}
+
+# Step 8. Outcomes over the 365-day follow-up
+
+**What.** Load data; keep follow-up fills (days 0-364) of either molecule, labelled by molecule (Zepbound/Mounjaro = tirzepatide; Wegovy/Ozempic/Rybelsus = semaglutide).
+
+**Why.** Persistence is measured on the index molecule, and fills of the other molecule mark switching.
+
+{{chunk:out-load}}
+
+**What.** Write the persistence function `persistence(day, ds, gap)`:
+
+- `start`/`end` lay the fills end to end, carrying early refills forward;
+- `gaps_before` and `tail_gap` measure days without supply;
+- the first gap longer than `gap` days is a discontinuation (`disc_day`);
+- `pdc` = days covered / 365.
+
+**Why.** This is the standard claims definition of persistence (no refill gap > 60 days) and adherence (proportion of days covered), as used by Marshall 2026. Writing it as a function lets us change the gap for the sensitivity analyses.
+
+{{chunk:out-persistence-function}}
+
+**What.** Apply the function to each patient (`group_by(member_id) |> reframe(persistence(...))`) with gaps of 60 (primary), 30 and 90 days, and on either molecule (`p_class`). Flag switching to the other molecule (`switching`).
+
+**Why.** The primary outcome and sensitivity analyses S1-S3 come from the same function, so only the definition changes.
+
+{{chunk:out-persistence}}
+
+**What.** Count follow-up encounters by type, and sum 12-month medical, pharmacy, study-drug and out-of-pocket costs. Flag the negative control outcome (colonoscopy 45378 or screening mammogram 77067).
+
+**Why.** These are the Aim 3 and 4 outcomes. The negative control outcome checks for residual confounding by healthcare-seeking behaviour.
+
+{{chunk:out-utilization-costs}}
+
+**What.** Join all outcomes, fill zeros for patients with no encounters (`coalesce(.x, 0)`), create binary outcomes (`pdc80`, `any_ip`, `any_ed`) and total cost; save `analytic.rds`; print a crude (unweighted) summary by drug.
+
+**Why.** One analytic dataset with one row per patient feeds every model. The crude summary is a first look before adjustment.
+
+{{chunk:out-assemble}}
+
+# Step 9. Table 1, propensity score and weighting
+
+**What.** Load the analytic file and write the propensity score formula from the DAG adjustment set (`covs`, `reformulate(covs, response = "treat")`).
+
+**Why.** The PS model includes the confounders and nothing measured after the index date.
+
+{{chunk:ps-formula}}
+
+**What.** Fit a logistic propensity score model and compute stabilized ATE weights with `WeightIt::weightit(..., method = "glm", estimand = "ATE", stabilize = TRUE)`; save the weights.
+
+**Why.** Inverse probability of treatment weighting creates a pseudo-population in which measured confounders are balanced between the drugs, as in a randomized trial. Stabilization keeps the weights near 1.
+
+{{chunk:ps-weights}}
+
+**What.** Check balance with `cobalt::bal.tab()`: standardized mean differences (SMD) and variance ratios before and after weighting; report the largest SMD and the effective sample size.
+
+**Why.** Weighting only works if balance is achieved; the SAP target is |SMD| < 0.10 for every covariate.
+
+{{chunk:ps-balance}}
+
+**What.** Build Table 1: unweighted and weighted means or percentages by group, with SMDs (`make_rows()`); save to CSV.
+
+**Why.** Table 1 describes the study population and shows the reader that the weighted groups are comparable.
+
+{{chunk:table1}}
+
+**What.** Plot the propensity score overlap (Figure 2) and a Love plot of balance (Figure 3).
+
+**Why.** Overlap checks positivity (each type of patient could have received either drug); the Love plot shows balance at a glance.
+
+{{chunk:ps-figures, fig.height = 9}}
+
+# Step 10. Outcome models
+
+**What.** Helper functions: `robust_ci()` (robust sandwich standard errors with `sandwich::vcovHC(type = "HC0")`), `wmean_by()` (weighted means by group) and `binary_effect()` (risk difference from a weighted linear model and risk ratio from a weighted log-link model).
+
+**Why.** Weighted analyses need robust variance; each binary outcome is analysed in the same way.
+
+{{chunk:models-helpers}}
+
+**What**
+
+- Primary outcome: `binary_effect("persistent")`.
+- Time to discontinuation: weighted Kaplan-Meier (`survfit(..., weights = w)`) and weighted Cox model (`coxph(..., robust = TRUE)`); proportional hazards test (`cox.zph()`).
+- Restricted mean days on treatment (`rmst()`); Kaplan-Meier figure (Figure 4).
+
+**Why.** Aim 1 asks for both persistence at 12 months and time to discontinuation. RMST is easy to interpret ("days on treatment") and stays valid if hazards are not proportional.
+
+{{chunk:models-persistence}}
+
+**What.** PDC mean difference (weighted linear model), PDC >= 80% and switching (`binary_effect()`), combined into Table 2.
+
+**Why.** Aim 2 (adherence and switching).
+
+{{chunk:models-adherence}}
+
+**What.** Any inpatient admission and any ED visit (`binary_effect()`); outpatient and obesity-related visit counts with weighted negative binomial models (`MASS::glm.nb()`), with the Poisson dispersion as a check.
+
+**Why.** Aim 3. Visit counts are overdispersed (variance > mean), which the negative binomial model allows.
+
+{{chunk:models-utilization}}
+
+**What**
+
+- Total and pharmacy costs: weighted gamma GLM with log link (`family = Gamma(link = "log")`) gives the cost ratio.
+- Medical costs (some are $0): two-part model, part 1 logistic for any cost and part 2 gamma for positive costs (`twopart_mean()`).
+- Weighted mean costs by group (`cost_means`).
+
+**Why.** Aim 4. Costs are skewed and cannot be negative; the gamma-log GLM models the mean directly without retransformation problems, and the two-part model handles zeros.
+
+{{chunk:models-costs}}
+
+**What.** Bootstrap 500 times (`boot_once()`): resample patients, re-estimate the propensity score and weights, and recompute the cost differences and RMST difference; take the 2.5th and 97.5th percentiles as the 95% CI. Assemble and save Tables 2 and 3.
+
+**Why.** Confidence intervals for differences in mean costs should reflect skewness and the uncertainty from estimating the weights; the bootstrap does both.
+
+{{chunk:models-bootstrap}}
+
+**What**
+
+- Proportional hazards global test.
+- Modified Park test for the cost variance function (slope near 2 supports gamma).
+- Poisson dispersion for visit counts.
+- Share of $0 medical costs; Schoenfeld residual plot.
+
+**Why.** Workflow step 9: confirm each model's assumptions before interpreting it, and record any departure.
+
+{{chunk:models-checks}}
+
+**What.** Plot weighted cost distributions on a log scale (Figure 5).
+
+**Why.** It shows the skewness that justified the gamma and two-part models.
+
+{{chunk:models-cost-figure, fig.height = 7}}
+
+# Step 11. Subgroup, sensitivity and bias analyses
+
+**What.** Helpers: `persist_effect()` (weighted RD and RR for any data, outcome and weight column) and `reweight()` (re-estimates weights when the population changes).
+
+**Why.** Every sensitivity analysis is computed the same way, so only the planned change differs from the primary analysis.
+
+{{chunk:sens-helpers}}
+
+**What.** For each prespecified subgroup (obesity class, sex, age group, CDHP), estimate RD and RR within each level and test the treatment-by-subgroup interaction with a robust multi-degree-of-freedom Wald test (`t(b) %*% solve(V) %*% b`).
+
+**Why.** Aim 5. Interaction tests guard against over-reading chance differences between subgroups.
+
+{{chunk:subgroups}}
+
+**What.** Sensitivity analyses from the SAP:
+
+- S1-S3: alternative persistence definitions;
+- S4: 1:1 PS matching (`MatchIt::matchit(caliper = 0.2)`);
+- S5: trimmed weights;
+- S6: doubly robust g-computation (`marginaleffects::avg_comparisons()`);
+- S7: excluding metformin users;
+- S8: recorded obesity class only;
+- S11: negative control outcome.
+
+**Why.** Aim 6. If conclusions stay the same across definitions and methods, they are less likely to be artefacts of a single analytic choice.
+
+{{chunk:sensitivity}}
+
+**What.** S9: winsorize costs at the 99th percentile (`wins()`) and recompute weighted mean differences.
+
+**Why.** It shows whether a few very expensive patients drive the cost results.
+
+{{chunk:sensitivity-costs}}
+
+**What.** S10: E-values for the primary risk ratio (`EValue::evalues.RR()`) and hazard ratio (`evalues.HR(rare = FALSE)`).
+
+**Why.** The E-value is the minimum strength of association an unmeasured confounder would need with both drug choice and persistence to explain away the result.
+
+{{chunk:evalues}}
+
+**What.** Forest plots of the subgroup (Figure 6) and sensitivity (Figure 7) results.
+
+**Why.** It summarises robustness visually for the paper.
+
+{{chunk:sens-figures, fig.height = 5}}
+
+# Session information
+
+```{r session-info}
+sessionInfo()
+```

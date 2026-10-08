@@ -19,13 +19,13 @@ robust_ci <- function(fit, term = "treat", exp = FALSE) {
 # Weighted persistence comparison in data `d` with weights column `w`
 persist_effect <- function(d, label, y = "persistent", wcol = "w") {
   d$y <- as.numeric(d[[y]]); d$wt <- d[[wcol]]
-  rd <- robust_ci(lm(y ~ treat, data = d, weights = wt))
-  rr <- robust_ci(glm(y ~ treat, data = d, weights = wt, family = quasipoisson(link = "log")), exp = TRUE)
+  rd_ci <- robust_ci(lm(y ~ treat, data = d, weights = wt))
+  rr_ci <- robust_ci(glm(y ~ treat, data = d, weights = wt, family = quasipoisson(link = "log")), exp = TRUE)
   tibble(analysis = label, n = nrow(d),
          tirz = 100 * weighted.mean(d$y[d$treat == 1], d$wt[d$treat == 1]),
          sema = 100 * weighted.mean(d$y[d$treat == 0], d$wt[d$treat == 0]),
-         rd = 100 * rd[["est"]], rd_lo = 100 * rd[["lo"]], rd_hi = 100 * rd[["hi"]],
-         rr = rr[["est"]], rr_lo = rr[["lo"]], rr_hi = rr[["hi"]])
+         rd = 100 * rd_ci[["est"]], rd_lo = 100 * rd_ci[["lo"]], rd_hi = 100 * rd_ci[["hi"]],
+         rr = rr_ci[["est"]], rr_lo = rr_ci[["lo"]], rr_hi = rr_ci[["hi"]])
 }
 # Re-estimate stabilized ATE weights within a subset (the population changes)
 reweight <- function(d, drop = character()) {
@@ -58,7 +58,8 @@ primary <- persist_effect(analytic, "Primary: IPTW, 60-day gap")
 m_out <- MatchIt::matchit(ps_spec$ps_formula, data = analytic, method = "nearest",
                           distance = "glm", link = "linear.logit", caliper = 0.2, estimand = "ATT")
 matched <- MatchIt::match.data(m_out)
-max_smd_matched <- max(abs(cobalt::bal.tab(m_out, binary = "std")$Balance$Diff.Adj), na.rm = TRUE)
+bal_m <- cobalt::bal.tab(m_out, binary = "std")$Balance
+max_smd_matched <- max(abs(bal_m[rownames(bal_m) != "distance", "Diff.Adj"]), na.rm = TRUE)  # covariates only
 
 # S5: weights truncated at the 1st and 99th percentiles
 trimmed <- analytic |> mutate(w = pmin(pmax(w, quantile(w, 0.01)), quantile(w, 0.99)))
@@ -85,7 +86,7 @@ sensitivity <- bind_rows(
   persist_effect(analytic, "S11: Negative control outcome - cancer screening", y = "neg_control")
 )
 print(sensitivity, width = 200)
-message("Matched pairs: ", sum(matched$treat == 1), "; largest SMD after matching: ", round(max_smd_matched, 3))
+message("Matched pairs: ", sum(matched$treat == 1), "; largest covariate SMD after matching: ", round(max_smd_matched, 3))
 
 ## ---- sensitivity-costs ----
 # S9: costs winsorized at the 99th percentile (all patients pooled)
